@@ -20,7 +20,7 @@ def calculate_angle(a, b, c):
     ba = a - b
     bc = c - b
     
-    # Calculate cosine angle
+    # Calculate cosine angle (cos(theta) = (a.b)/(||a||*||b||))
     cosine_angle = np.dot(ba, bc) / (np.linalg.norm(ba) * np.linalg.norm(bc))
     angle = np.arccos(np.clip(cosine_angle, -1.0, 1.0))
     
@@ -28,6 +28,11 @@ def calculate_angle(a, b, c):
 
 
 def detect_pose(video_path):
+    """Driver function. Run pose estimation on input video
+    
+    Args:
+        video_path (str): Path to video file or url to input stream
+    """
     # Mediapipe initialization
     mp_pose = mp.solutions.pose
     pose = mp_pose.Pose()
@@ -84,8 +89,15 @@ def detect_pose(video_path):
     cv2.destroyAllWindows()
 
     # Output knee angles
-    print(knee_angles)
+    # print(knee_angles)
 
 
 if __name__ == "__main__":
-    detect_pose("/home/srg/Videos/Screencasts/Screencast from 2024-12-13 23-46-04.mp4")
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--source", default=None, type=str, help="path to a vdeo file or video stream url.")
+    args = parser.parse_args()
+    assert args.source is not None, "PLEASE PASS A SOURCE USING --source"
+        
+
+    detect_pose(args.source)
